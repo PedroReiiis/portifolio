@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedro Almendro — Front-End &amp; Automação</title>
+  <meta name="description" content="Portfólio de Pedro Henrique dos Reis Almendro: Front-End (HTML5, CSS3, JavaScript ES6+) e automação com Python. Disponível para freelance e projetos.">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tema aplicado antes da renderização. Padrão: escuro. -->
+  <script>
+    (function () {
+      var t = 'dark';
+      try { t = localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <style>
+    /* ============ TOKENS ============ */
+    :root, [data-theme="dark"] {
+      --bg: #000000;
+      --surface: #0a0a0b;
+      --surface-2: #111113;
+      --line: #1f1f23;
+      --line-strong: #34343b;
+      --ink: #e8e8ea;
+      --ink-soft: #8b8b94;
+      --accent: #00e676;
+      --accent-ink: #000000;
+      --online: #00e676;
+
+      --tok-key: #7dd3fc;
+      --tok-str: #a5e8b5;
+      --tok-num: #fbbf77;
+      --tok-bool: #f48fb1;
+      --tok-punct: #6b6b75;
+
+      --c-html: #ff7043;
+      --c-css: #b38cff;
+      --c-js: #f1e05a;
+      --c-py: #5aa9e6;
+      --err: #ff5c5c;
+    }
+    [data-theme="light"] {
+      --bg: #f7f7f4;
+      --surface: #ffffff;
+      --surface-2: #efefea;
+      --line: #dcdcd5;
+      --line-strong: #b9b9b0;
+      --ink: #121214;
+      --ink-soft: #5d5d66;
+      --accent: #0b7a4b;
+      --accent-ink: #ffffff;
+      --online: #16a34a;
+
+      --tok-key: #0b5cad;
+      --tok-str: #0b7a4b;
+      --tok-num: #a35200;
+      --tok-bool: #b5236a;
+      --tok-punct: #8a8a92;
+
+      --c-html: #d84315;
+      --c-css: #6a3fd6;
+      --c-js: #b89b00;
+      --c-py: #2b6cb0;
+      --err: #c62828;
+    }
+    :root {
+      --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      --sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --r: 6px;
+      --r-sm: 4px;
+      --r-lg: 8px;
+      --container: 1160px;
+      --t: .15s ease;
+    }
+
+    /* ============ BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      margin: 0; font-family: var(--sans); font-size: 1rem; line-height: 1.65;
+      color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased;
+      transition: background var(--t), color var(--t);
+    }
+    h1, h2, h3, p, pre, dl, dd { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    button, input, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    svg { display: block; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+    :focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+
+    .container { width: min(100% - 2.5rem, var(--container)); margin-inline: auto; }
+    section { padding-block: clamp(4rem, 9vw, 7rem); border-bottom: 1px solid var(--line); }
+    .mono { font-family: var(--mono); }
+    .skip-link { position: absolute; left: -9999px; top: 8px; background: var(--accent); color: var(--accent-ink); padding: .5rem .9rem; border-radius: var(--r-sm); z-index: 300; font-family: var(--mono); font-size: .8rem; }
+    .skip-link:focus { left: 8px; }
+
+    .sec-label { font-family: var(--mono); font-size: .8rem; color: var(--accent); letter-spacing: .02em; margin-bottom: 1rem; }
+    .sec-label span { color: var(--ink-soft); }
+    .sec-title { font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.15; max-width: 24ch; }
+    .sec-head { margin-bottom: clamp(2.25rem, 5vw, 3.5rem); }
+
+    /* ============ BOTÕES / TAGS ============ */
+    .btn {
+      display: inline-flex; align-items: center; gap: .6rem; padding: .8rem 1.2rem;
+      font-family: var(--mono); font-size: .85rem; font-weight: 500;
+      border: 1px solid var(--line-strong); border-radius: var(--r); background: transparent;
+      transition: transform var(--t), background var(--t), border-color var(--t), color var(--t);
+    }
+    .btn:hover { transform: translateY(-1px); border-color: var(--ink); }
+    .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+    .btn-primary:hover { border-color: var(--accent); filter: brightness(1.08); }
+    .btn svg { width: 15px; height: 15px; }
+    .tag {
+      display: inline-block; font-family: var(--mono); font-size: .75rem; line-height: 1;
+      padding: .4rem .6rem; border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+      color: var(--ink-soft); background: transparent; transition: color var(--t), border-color var(--t);
+    }
+    .tag:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+    /* ============ HEADER ============ */
+    .header { position: sticky; top: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .header-inner { height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .logo { font-family: var(--mono); font-weight: 700; font-size: .95rem; }
+    .logo i { font-style: normal; color: var(--accent); }
+    .nav { display: none; gap: 1.75rem; font-family: var(--mono); font-size: .8rem; color: var(--ink-soft); }
+    .nav a { transition: color var(--t); }
+    .nav a b { color: var(--accent); font-weight: 500; margin-right: .3em; }
+    .nav a:hover, .nav a.active { color: var(--ink); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; gap: .55rem; height: 36px; padding: 0 .7rem;
+      border: 1px solid var(--line-strong); border-radius: var(--r); background: transparent;
+      font-family: var(--mono); font-size: .75rem; color: var(--ink-soft);
+      transition: border-color var(--t), color var(--t);
+    }
+    .theme-toggle:hover { border-color: var(--ink); color: var(--ink); }
+    .theme-toggle svg { width: 15px; height: 15px; }
+    .theme-toggle .i-sun { display: none; }
+    [data-theme="light"] .theme-toggle .i-sun { display: block; }
+    [data-theme="light"] .theme-toggle .i-moon { display: none; }
+    @media (min-width: 880px) { .nav { display: flex; } }
+
+    /* ============ HERO ============ */
+    .hero { padding-block: clamp(3rem, 8vw, 6.5rem); }
+    .hero-grid { display: grid; gap: 4rem; align-items: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .65rem; padding: .5rem .8rem;
+      border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface);
+      font-family: var(--mono); font-size: .72rem; letter-spacing: .02em; color: var(--ink-soft);
+      margin-bottom: 1.75rem;
+    }
+    .badge b { color: var(--accent); font-weight: 500; }
+    .pulse-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--online); flex: none; }
+    .pulse-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--online); animation: pulse 1.6s ease-out infinite; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: .75; } 70%, 100% { transform: scale(3.4); opacity: 0; } }
+
+    /* Ponto clicável (área de toque maior que o ponto visível) */
+    .dot-btn { display: grid; place-items: center; width: 24px; height: 24px; margin: -8px 0 -8px -8px; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; flex: none; }
+    .dot-btn:active .pulse-dot { transform: scale(.7); }
+    .pulse-dot { transition: background var(--t), transform var(--t); }
+    .badge { transition: background var(--t), border-color var(--t), color var(--t); }
+    #statusText { transition: color var(--t); }
+    /* Estado "irritado": fundo vermelho, texto branco, ponto branco */
+    .badge[data-mood] { background: #d62828; border-color: #d62828; color: #fff; }
+    .badge[data-mood] #statusText, .badge[data-mood] #statusText b { color: #fff; }
+    .badge[data-mood] .pulse-dot, .badge[data-mood] .pulse-dot::after { background: #fff; }
+    .badge[data-mood="coffee"] .pulse-dot::after { animation-duration: .45s; }
+
+    .hero h1 { font-size: clamp(2.2rem, 5.6vw, 4rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.06; max-width: 16ch; }
+    .hero h1 em { font-style: normal; font-family: var(--mono); font-weight: 700; color: var(--accent); letter-spacing: -.06em; }
+    .hero-lead { margin-top: 1.5rem; max-width: 50ch; color: var(--ink-soft); font-size: clamp(1rem, 1.5vw, 1.12rem); }
+    .hero-cta { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+
+    .hero-visual { position: relative; padding-bottom: 2.5rem; }
+    .terminal { border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+    .term-bar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: 0 .9rem; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+    .term-dots { display: flex; gap: 6px; }
+    .term-dots i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--line-strong); }
+    .term-tabs { display: flex; }
+    .term-tab { padding: .7rem .9rem; border: 0; border-left: 1px solid var(--line); background: transparent; font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); transition: color var(--t), background var(--t); }
+    .term-tab:last-child { border-right: 1px solid var(--line); }
+    .term-tab:hover { color: var(--ink); }
+    .term-tab[aria-selected="true"] { color: var(--ink); background: var(--surface); box-shadow: inset 0 -1px 0 var(--accent); }
+    .term-body { padding: 1.25rem 1.1rem 4rem; font-family: var(--mono); font-size: .78rem; line-height: 1.75; min-height: 340px; }
+    .term-body pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
+    .term-body code { font: inherit; }
+    .term-prompt { color: var(--ink-soft); margin-bottom: .6rem; }
+    .term-prompt b { color: var(--accent); font-weight: 500; }
+    .tk { color: var(--tok-key); } .ts { color: var(--tok-str); } .tn { color: var(--tok-num); } .tb { color: var(--tok-bool); } .tp { color: var(--tok-punct); }
+    .cursor { display: inline-block; width: .55em; height: 1.05em; background: var(--accent); vertical-align: text-bottom; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .avatar {
+      position: absolute; right: .9rem; bottom: 0; width: 112px;
+      border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--bg); padding: 6px;
+    }
+    .avatar-frame { position: relative; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--surface-2); }
+    .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 1.6rem; color: var(--accent); }
+    .avatar-cap { display: flex; align-items: center; gap: .4rem; margin-top: 6px; font-family: var(--mono); font-size: .62rem; color: var(--ink-soft); }
+    .avatar-cap .pulse-dot { width: 6px; height: 6px; }
+    .avatar-cap .pulse-dot::after { animation: none; display: none; }
+
+    @media (min-width: 960px) {
+      .hero-grid { grid-template-columns: 1.05fr 1fr; gap: 4.5rem; }
+      .avatar { right: -1.25rem; width: 128px; }
+    }
+
+    /* ============ 01 // ARQUITETURA ============ */
+    .arch-grid { display: grid; gap: 3rem; }
+    .arch-text p { color: var(--ink-soft); font-size: 1.05rem; max-width: 56ch; }
+    .arch-text p + p { margin-top: 1.1rem; }
+    .arch-text strong { color: var(--ink); font-weight: 600; }
+    .panel { border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; align-self: start; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; padding: .7rem 1rem; border-bottom: 1px solid var(--line); background: var(--surface-2); font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
+    .panel-head b { color: var(--accent); font-weight: 500; }
+    .log-row { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: .95rem 1rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+    .log-row:last-child { border-bottom: 0; }
+    .log-row dt { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); padding-top: .15rem; }
+    .log-row dd { font-weight: 500; }
+    .log-row dd small { display: block; font-weight: 400; color: var(--ink-soft); font-size: .8rem; }
+    .status-run { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--mono); font-size: .78rem; color: var(--accent); }
+    @media (min-width: 900px) { .arch-grid { grid-template-columns: 1.15fr 1fr; gap: 5rem; } }
+
+    /* ============ 02 // STACK ============ */
+    .stack-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+    .stack-col { background: var(--bg); padding: 1.75rem; transition: background var(--t); }
+    .stack-col:hover { background: var(--surface); }
+    .stack-scope { font-family: var(--mono); font-size: .72rem; color: var(--accent); }
+    .stack-col h3 { margin: .6rem 0 .5rem; font-size: 1.1rem; letter-spacing: -.02em; }
+    .stack-col p { color: var(--ink-soft); font-size: .92rem; }
+    .stack-col ul { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: .45rem; }
+    @media (min-width: 820px) { .stack-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ============ 03 // REPOSITÓRIOS ============ */
+    .repo-top { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    .filters { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .filter-btn { padding: .5rem .85rem; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: transparent; font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); transition: color var(--t), border-color var(--t), background var(--t); }
+    .filter-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+    .repo-count { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); }
+    .repo-grid { display: grid; gap: 1rem; }
+    .repo { display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--surface); padding: 1.4rem; transition: border-color var(--t), transform var(--t); }
+    .repo:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .repo.hide { display: none; }
+    .repo.pop { animation: pop .2s ease both; }
+    @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .repo-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+    .repo-name { display: flex; align-items: center; gap: .5rem; font-family: var(--mono); font-weight: 700; font-size: .95rem; color: var(--tok-key); min-width: 0; }
+    .repo-name svg { width: 16px; height: 16px; flex: none; color: var(--ink-soft); }
+    .pill { font-family: var(--mono); font-size: .65rem; padding: .25rem .5rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); flex: none; }
+    .repo p { margin-top: .85rem; color: var(--ink-soft); font-size: .92rem; flex: 1; }
+    .lang-bar { display: flex; height: 6px; margin-top: 1.4rem; border-radius: 3px; overflow: hidden; gap: 2px; }
+    .lang-bar span { display: block; height: 100%; }
+    .lang-legend { margin-top: .75rem; display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
+    .lang-legend li { display: inline-flex; align-items: center; gap: .4rem; }
+    .lang-legend i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+    .repo-foot { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-family: var(--mono); font-size: .75rem; }
+    .repo-foot a { color: var(--ink); display: inline-flex; align-items: center; gap: .4rem; transition: color var(--t); }
+    .repo-foot a:hover { color: var(--accent); }
+    .repo-foot a svg { width: 13px; height: 13px; }
+    .c-html { background: var(--c-html); } .c-css { background: var(--c-css); } .c-js { background: var(--c-js); } .c-py { background: var(--c-py); }
+    @media (min-width: 720px) { .repo-grid { grid-template-columns: repeat(2, 1fr); } .repo-top { flex-direction: row; justify-content: space-between; align-items: center; } }
+    @media (min-width: 1040px) { .repo-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ============ 04 // CONTATO ============ */
+    .connect-grid { display: grid; gap: 3rem; }
+    .connect-info p { margin-top: 1.1rem; color: var(--ink-soft); max-width: 42ch; }
+    .connect-list { margin-top: 1.75rem; display: grid; gap: .8rem; font-family: var(--mono); font-size: .82rem; }
+    .connect-list a { display: inline-flex; align-items: center; gap: .6rem; color: var(--ink-soft); transition: color var(--t); }
+    .connect-list a:hover { color: var(--accent); }
+    .connect-list svg { width: 16px; height: 16px; }
+    .form { display: grid; gap: 1.6rem; }
+    .field { display: grid; gap: .4rem; }
+    .field label { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); }
+    .field label b { color: var(--accent); font-weight: 500; }
+    .field input, .field textarea {
+      width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0;
+      padding: .6rem 0; font-size: 1rem; outline: none; transition: border-color var(--t);
+    }
+    .field textarea { min-height: 110px; resize: vertical; }
+    .field input::placeholder, .field textarea::placeholder { color: var(--ink-soft); opacity: .55; }
+    .field input:focus, .field textarea:focus { border-bottom-color: var(--accent); }
+    .field[data-invalid="true"] input, .field[data-invalid="true"] textarea { border-bottom-color: var(--err); }
+    .field-err { min-height: 1.1em; font-family: var(--mono); font-size: .7rem; color: var(--err); }
+    .form .btn { justify-self: start; }
+    .form-note { font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
+    @media (min-width: 900px) { .connect-grid { grid-template-columns: 1fr 1.1fr; gap: 6rem; } }
+
+    /* ============ 05 // FOOTER ============ */
+    .footer { padding-block: 2.5rem 6rem; border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .footer-copy { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); }
+    .footer-copy b { color: var(--accent); font-weight: 500; }
+    .social { display: flex; gap: .6rem; }
+    .social a { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: var(--r); color: var(--ink-soft); transition: color var(--t), border-color var(--t), transform var(--t); }
+    .social a svg { width: 18px; height: 18px; }
+    .social a:hover { transform: translateY(-2px); }
+    .social .s-ig:hover { color: #e1306c; border-color: #e1306c; }
+    .social .s-wa:hover { color: #25d366; border-color: #25d366; }
+    .social .s-gh:hover { color: var(--ink); border-color: var(--ink); }
+
+    /* ============ FLUTUANTES (inferior direito) ============ */
+    .fab-group { position: fixed; right: 1rem; bottom: 1rem; z-index: 90; display: flex; flex-direction: column; gap: .55rem; }
+    .fab { position: relative; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: var(--r); background: var(--surface); color: var(--ink-soft); transition: color var(--t), border-color var(--t), transform var(--t); }
+    .fab svg { width: 20px; height: 20px; }
+    .fab:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .fab::after {
+      content: attr(data-label); position: absolute; right: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+      padding: .3rem .5rem; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface);
+      font-family: var(--mono); font-size: .68rem; color: var(--ink); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity var(--t);
+    }
+    .fab:hover::after, .fab:focus-visible::after { opacity: 1; }
+
+    /* ============ REVEAL (rápido) ============ */
+    .reveal { opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#conteudo" class="skip-link">skip_to_content()</a>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="#inicio" class="logo" aria-label="Pedro Almendro — início">~/pedro<i>.</i>dev</a>
+
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="#arquitetura"><b>01</b>arquitetura</a>
+        <a href="#stack"><b>02</b>stack</a>
+        <a href="#repositorios"><b>03</b>repos</a>
+        <a href="#contato"><b>04</b>connect</a>
+      </nav>
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar entre tema escuro e claro">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <span id="themeLabel">dark</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ============ HERO / TERMINAL ============ -->
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+
+        <div class="hero-text">
+          <div class="badge reveal" id="statusBadge">
+            <button class="dot-btn" id="statusDot" type="button" aria-label="Indicador de disponibilidade (clique para interagir)">
+              <span class="pulse-dot" aria-hidden="true"></span>
+            </button>
+            <span id="statusText" role="status" aria-live="polite"><b>[STATUS]</b> AVAILABLE FOR FREELANCE &amp; PROJECTS</span>
+          </div>
+
+          <h1 class="reveal">Front-end preciso, <em>automação</em> que escala.</h1>
+
+          <p class="hero-lead reveal">
+            Pedro Almendro. Construo interfaces rápidas e semânticas com HTML5, CSS3 e JavaScript, e uso Python para automatizar fluxos de trabalho e tratar dados.
+          </p>
+
+          <div class="hero-cta reveal">
+            <a href="#contato" class="btn btn-primary">
+              ./iniciar-projeto
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#repositorios" class="btn">ls ./repositorios</a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="terminal" role="region" aria-label="Terminal com dados do perfil">
+            <div class="term-bar">
+              <div class="term-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="term-tabs" role="tablist" aria-label="Formato dos dados">
+                <button class="term-tab" role="tab" id="tab-json" aria-selected="true" aria-controls="pane-json" type="button">profile.json</button>
+                <button class="term-tab" role="tab" id="tab-py" aria-selected="false" aria-controls="pane-py" tabindex="-1" type="button">profile.py</button>
+              </div>
+            </div>
+
+            <div class="term-body">
+              <div id="pane-json" role="tabpanel" aria-labelledby="tab-json">
+                <p class="term-prompt"><b>$</b> cat profile.json</p>
+<pre><code><span class="tp">{</span>
+  <span class="tk">"name"</span><span class="tp">:</span> <span class="ts">"Pedro Henrique dos Reis Almendro"</span><span class="tp">,</span>
+  <span class="tk">"role"</span><span class="tp">:</span> <span class="ts">"Front-End Developer"</span><span class="tp">,</span>
+  <span class="tk">"education"</span><span class="tp">: {</span>
+    <span class="tk">"course"</span><span class="tp">:</span> <span class="ts">"Análise e Desenvolvimento de Sistemas"</span><span class="tp">,</span>
+    <span class="tk">"semester"</span><span class="tp">:</span> <span class="tn">1</span><span class="tp">,</span>
+    <span class="tk">"school"</span><span class="tp">:</span> <span class="ts">"Faculdade Invest"</span>
+  <span class="tp">},</span>
+  <span class="tk">"stack"</span><span class="tp">: [</span><span class="ts">"HTML5"</span><span class="tp">,</span> <span class="ts">"CSS3"</span><span class="tp">,</span> <span class="ts">"JavaScript ES6+"</span><span class="tp">,</span> <span class="ts">"Python"</span><span class="tp">],</span>
+  <span class="tk">"available"</span><span class="tp">:</span> <span class="tb">true</span><span class="tp">,</span>
+  <span class="tk">"contact"</span><span class="tp">:</span> <span class="ts">"pedrooffice@gmail.com"</span>
+<span class="tp">}</span> <span class="cursor" aria-hidden="true"></span></code></pre>
+              </div>
+
+              <div id="pane-py" role="tabpanel" aria-labelledby="tab-py" hidden>
+                <p class="term-prompt"><b>&gt;&gt;&gt;</b> print(profile)</p>
+<pre><code><span class="tk">profile</span> <span class="tp">= {</span>
+    <span class="ts">"name"</span><span class="tp">:</span> <span class="ts">"Pedro Henrique dos Reis Almendro"</span><span class="tp">,</span>
+    <span class="ts">"role"</span><span class="tp">:</span> <span class="ts">"Front-End Developer"</span><span class="tp">,</span>
+    <span class="ts">"education"</span><span class="tp">: {</span>
+        <span class="ts">"course"</span><span class="tp">:</span> <span class="ts">"Análise e Desenvolvimento de Sistemas"</span><span class="tp">,</span>
+        <span class="ts">"semester"</span><span class="tp">:</span> <span class="tn">1</span><span class="tp">,</span>
+        <span class="ts">"school"</span><span class="tp">:</span> <span class="ts">"Faculdade Invest"</span><span class="tp">,</span>
+    <span class="tp">},</span>
+    <span class="ts">"stack"</span><span class="tp">: [</span><span class="ts">"HTML5"</span><span class="tp">,</span> <span class="ts">"CSS3"</span><span class="tp">,</span> <span class="ts">"JavaScript ES6+"</span><span class="tp">,</span> <span class="ts">"Python"</span><span class="tp">],</span>
+    <span class="ts">"available"</span><span class="tp">:</span> <span class="tb">True</span><span class="tp">,</span>
+    <span class="ts">"contact"</span><span class="tp">:</span> <span class="ts">"pedrooffice@gmail.com"</span><span class="tp">,</span>
+<span class="tp">}</span> <span class="cursor" aria-hidden="true"></span></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Foto de perfil sobreposta ao terminal -->
+          <figure class="avatar" style="margin:0">
+            <div class="avatar-frame">
+              <img src="foto-perfil.jpg" alt="Foto de perfil de Pedro Almendro" width="120" height="120" loading="eager"
+                   onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+              <div class="avatar-fallback" hidden aria-hidden="true">PA</div>
+            </div>
+            <figcaption class="avatar-cap"><span class="pulse-dot" aria-hidden="true"></span>online</figcaption>
+          </figure>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ 01 // SYSTEM ARCHITECTURE ============ -->
+    <section id="arquitetura">
+      <div class="container arch-grid">
+        <div class="arch-text">
+          <p class="sec-label reveal">01 <span>//</span> System Architecture</p>
+          <h2 class="sec-title reveal">Problemas bem definidos, soluções simples.</h2>
+          <div style="margin-top:1.75rem" class="reveal">
+            <p>
+              Antes de escrever código, eu <strong>mapeio o problema</strong>: quem usa, o que precisa e qual é o caminho mais curto até o resultado. No Front-End, isso vira estrutura semântica, performance e acessibilidade desde o início.
+            </p>
+            <p>
+              Quando há trabalho repetitivo, entra o <strong>Python</strong>: automação de fluxos, scripts de apoio e tratamento de dados para devolver tempo ao que realmente importa.
+            </p>
+          </div>
+        </div>
+
+        <aside class="panel reveal" aria-label="Status acadêmico">
+          <div class="panel-head"><span>academic.log</span><b>● ativo</b></div>
+          <dl>
+            <div class="log-row"><dt>curso</dt><dd>Análise e Desenvolvimento de Sistemas <small>ADS · Tecnólogo</small></dd></div>
+            <div class="log-row"><dt>período</dt><dd>1º semestre</dd></div>
+            <div class="log-row"><dt>instituição</dt><dd>Faculdade Invest</dd></div>
+            <div class="log-row"><dt>status</dt><dd><span class="status-run"><span class="pulse-dot" aria-hidden="true"></span>RUNNING</span></dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ 02 // CORE STACK ============ -->
+    <section id="stack">
+      <div class="container">
+        <div class="sec-head">
+          <p class="sec-label reveal">02 <span>//</span> Core Stack</p>
+          <h2 class="sec-title reveal">Tecnologias por escopo de aplicação.</h2>
+        </div>
+
+        <div class="stack-grid reveal">
+          <article class="stack-col">
+            <span class="stack-scope">scope: client-side</span>
+            <h3>Client-Side</h3>
+            <p>Interfaces responsivas, semânticas e leves, sem dependências desnecessárias.</p>
+            <ul>
+              <li><code class="tag">HTML5</code></li>
+              <li><code class="tag">CSS3</code></li>
+              <li><code class="tag">JavaScript ES6+</code></li>
+            </ul>
+          </article>
+
+          <article class="stack-col">
+            <span class="stack-scope">scope: automation</span>
+            <h3>Automation &amp; Scripts</h3>
+            <p>Python para automação de fluxos de trabalho, manipulação de scripts e engenharia de dados.</p>
+            <ul>
+              <li><code class="tag">Python</code></li>
+              <li><code class="tag">Automação</code></li>
+              <li><code class="tag">Dados</code></li>
+            </ul>
+          </article>
+
+          <article class="stack-col">
+            <span class="stack-scope">scope: ui-ux</span>
+            <h3>UI/UX Metrics</h3>
+            <p>Decisões guiadas por legibilidade, contraste, hierarquia e acessibilidade.</p>
+            <ul>
+              <li><code class="tag">Mobile-first</code></li>
+              <li><code class="tag">A11y</code></li>
+              <li><code class="tag">Performance</code></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 // REPOSITORIES ============ -->
+    <section id="repositorios">
+      <div class="container">
+        <div class="sec-head" style="margin-bottom:2rem">
+          <p class="sec-label reveal">03 <span>//</span> Repositories</p>
+          <h2 class="sec-title reveal">Projetos publicados.</h2>
+        </div>
+
+        <div class="repo-top reveal">
+          <div class="filters" role="group" aria-label="Filtrar repositórios">
+            <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+            <button class="filter-btn" type="button" data-filter="frontend" aria-pressed="false">Front-End</button>
+            <button class="filter-btn" type="button" data-filter="python" aria-pressed="false">Python Scripts</button>
+          </div>
+          <span class="repo-count" id="repoCount" aria-live="polite">4 repositórios</span>
+        </div>
+
+        <!-- Troque os href="https://github.com" pelo link de cada repositório e ajuste as porcentagens de linguagem -->
+        <div class="repo-grid">
+
+          <article class="repo" data-category="frontend">
+            <div class="repo-head">
+              <h3 class="repo-name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2.5zM6 17h13M6 21h13v-4"/></svg>
+                Deufome-Lanches
+              </h3>
+              <span class="pill">public</span>
+            </div>
+            <p>Menu digital para delivery, pensado para escolher e pedir rápido pelo celular.</p>
+            <div class="lang-bar" aria-hidden="true">
+              <span class="c-css" style="width:55%"></span><span class="c-js" style="width:30%"></span><span class="c-html" style="width:15%"></span>
+            </div>
+            <ul class="lang-legend">
+              <li><i class="c-css"></i>CSS 55%</li><li><i class="c-js"></i>JavaScript 30%</li><li><i class="c-html"></i>HTML 15%</li>
+            </ul>
+            <div class="repo-foot">
+              <span>menu-digital</span>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Abrir Deufome-Lanches no GitHub">ver repo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="repo" data-category="frontend">
+            <div class="repo-head">
+              <h3 class="repo-name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2.5zM6 17h13M6 21h13v-4"/></svg>
+                coisaNossa
+              </h3>
+              <span class="pill">public</span>
+            </div>
+            <p>Landing page institucional com apresentação clara da marca e chamadas para ação.</p>
+            <div class="lang-bar" aria-hidden="true">
+              <span class="c-css" style="width:70%"></span><span class="c-html" style="width:30%"></span>
+            </div>
+            <ul class="lang-legend">
+              <li><i class="c-css"></i>CSS 70%</li><li><i class="c-html"></i>HTML 30%</li>
+            </ul>
+            <div class="repo-foot">
+              <span>landing-page</span>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Abrir coisaNossa no GitHub">ver repo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="repo" data-category="frontend">
+            <div class="repo-head">
+              <h3 class="repo-name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2.5zM6 17h13M6 21h13v-4"/></svg>
+                Casamento &amp; Padrinhos
+              </h3>
+              <span class="pill">public</span>
+            </div>
+            <p>Template elegante de convite com confirmação de presença (RSVP) para casais e padrinhos.</p>
+            <div class="lang-bar" aria-hidden="true">
+              <span class="c-css" style="width:90%"></span><span class="c-js" style="width:10%"></span>
+            </div>
+            <ul class="lang-legend">
+              <li><i class="c-css"></i>CSS 90%</li><li><i class="c-js"></i>JavaScript 10%</li>
+            </ul>
+            <div class="repo-foot">
+              <span>template · rsvp</span>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Abrir Casamento e Padrinhos no GitHub">ver repo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="repo" data-category="python">
+            <div class="repo-head">
+              <h3 class="repo-name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2.5zM6 17h13M6 21h13v-4"/></svg>
+                python-scripts
+              </h3>
+              <span class="pill">public</span>
+            </div>
+            <p>Automações locais, scripts de otimização e rotinas de manipulação de dados.</p>
+            <div class="lang-bar" aria-hidden="true">
+              <span class="c-py" style="width:100%"></span>
+            </div>
+            <ul class="lang-legend">
+              <li><i class="c-py"></i>Python 100%</li>
+            </ul>
+            <div class="repo-foot">
+              <span>automação · dados</span>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Abrir scripts em Python no GitHub">ver repo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 // CONNECT ============ -->
+    <section id="contato">
+      <div class="container connect-grid">
+        <div class="connect-info">
+          <p class="sec-label reveal">04 <span>//</span> Connect</p>
+          <h2 class="sec-title reveal">Vamos construir algo?</h2>
+          <p class="reveal">Descreva o que precisa. Ao enviar, o WhatsApp abre com a mensagem já formatada e pronta.</p>
+          <ul class="connect-list reveal">
+            <li>
+              <a href="https://wa.me/5565996877963" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+                +55 65 99687-7963
+              </a>
+            </li>
+            <li>
+              <a href="mailto:pedrooffice@gmail.com">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                pedrooffice@gmail.com
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <form class="form reveal" id="contactForm" novalidate>
+          <div class="field" data-field="nome">
+            <label for="nome"><b>&gt;</b> nome</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name" maxlength="80" required aria-describedby="err-nome">
+            <span class="field-err" id="err-nome" role="alert"></span>
+          </div>
+          <div class="field" data-field="mensagem">
+            <label for="mensagem"><b>&gt;</b> mensagem</label>
+            <textarea id="mensagem" name="mensagem" placeholder="Conte sobre o projeto…" maxlength="800" required aria-describedby="err-mensagem"></textarea>
+            <span class="field-err" id="err-mensagem" role="alert"></span>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            ./enviar --whatsapp
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="form-note" id="formNote" role="status" aria-live="polite">// nada é armazenado: os dados vão direto para o WhatsApp.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 05 // FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="footer-copy"><b>05 //</b> © 2026 Pedro Henrique dos Reis Almendro</p>
+
+      <nav class="social" aria-label="Redes sociais">
+        <a class="s-ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a class="s-wa" href="https://wa.me/5565996877963" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        </a>
+        <a class="s-gh" href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        </a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- ============ FLUTUANTES (inferior direito) ============ -->
+  <div class="fab-group">
+    <a class="fab" href="mailto:pedrooffice@gmail.com" data-label="e-mail" aria-label="Enviar e-mail">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true"><rect x="3" y="5" width="18" height="14"/><path d="m3 6 9 7 9-7"/></svg>
+    </a>
+    <a class="fab" href="https://wa.me/5565996877963?text=Ol%C3%A1%2C%20Pedro!%20Vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" data-label="whatsapp" aria-label="Conversar no WhatsApp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 4h16v13H11l-5 4v-4H4z"/><path d="M8 9h8M8 12.5h5"/></svg>
+    </a>
+  </div>
+
+  <!-- ============ VLIBRAS (gov.br) — canto inferior esquerdo ============ -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget({ rootPath: 'https://vlibras.gov.br/app', position: 'BL' });</script>
+
+  <!-- ============ JAVASCRIPT ============ -->
+  <script>
+    (function () {
+      'use strict';
+
+      var WHATSAPP_NUMBER = '5565996877963';
+
+      /* ---------- Easter egg no console ---------- */
+      try {
+        var box = 'font:700 13px "JetBrains Mono",monospace;color:#00e676;background:#000;padding:8px 12px;border:1px solid #00e676;border-radius:4px;';
+        var txt = 'font:12px "JetBrains Mono",monospace;color:#9aa0a6;line-height:1.8;';
+        var hi  = 'font:700 12px "JetBrains Mono",monospace;color:#00e676;';
+        console.log('%c> pedro.dev :: hello, fellow dev', box);
+        console.log('%cInspecionando o código-fonte? Ótimo, eu também faço isso.\nHTML semântico, CSS com variáveis nativas e zero frameworks.', txt);
+        console.log('%c$ git commit -m "vamos construir algo juntos?"', hi);
+        console.log('%cRecrutador(a) ou dev: pedrooffice@gmail.com', txt);
+      } catch (e) {}
+
+      /* ---------- Tema ---------- */
+      var root = document.documentElement;
+      var themeBtn = document.getElementById('themeToggle');
+      var themeLabel = document.getElementById('themeLabel');
+      var metaTheme = document.querySelector('meta[name="theme-color"]');
+
+      function syncThemeUI() {
+        var t = root.getAttribute('data-theme');
+        themeLabel.textContent = t;
+        if (metaTheme) metaTheme.setAttribute('content', t === 'dark' ? '#000000' : '#f7f7f4');
+      }
+      syncThemeUI();
+
+      themeBtn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        syncThemeUI();
+      });
+
+      /* ---------- Easter egg: cliques no ponto verde ---------- */
+      var badge = document.getElementById('statusBadge');
+      var dot = document.getElementById('statusDot');
+      var statusText = document.getElementById('statusText');
+      var DEFAULT_HTML = statusText.innerHTML;
+      var RESET_MS = 20000;
+      var clicks = 0;
+      var resetTimer = null;
+
+      function setStatus(html, mood) {
+        statusText.innerHTML = html;
+        if (mood) badge.setAttribute('data-mood', mood); else badge.removeAttribute('data-mood');
+      }
+
+      function resetStatus() {
+        clicks = 0;
+        setStatus(DEFAULT_HTML, null); // volta ao verde e ao texto original
+      }
+
+      dot.addEventListener('click', function () {
+        clicks++;
+
+        if (clicks === 2) {
+          setStatus('🙄 Pare de me clicar, estou trabalhando! 💻', 'warn');
+        } else if (clicks === 4) {
+          setStatus('😬 Sério, vai quebrar o pixel verde... 💥', 'warn');
+        } else if (clicks >= 6) {
+          setStatus('☕ Ok, você ativou o modo café: <b>[STATUS]</b> Sob efeito de cafeína pura. ⚡🤪', 'coffee');
+        }
+
+        // 20 s sem cliques → restaura o estado original
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(resetStatus, RESET_MS);
+      });
+
+      /* ---------- Abas do terminal (JSON / Python) ---------- */
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.term-tab'));
+      function selectTab(tab) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.setAttribute('tabindex', on ? '0' : '-1');
+          document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+        });
+      }
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { selectTab(tab); });
+        tab.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+            selectTab(n); n.focus();
+          }
+        });
+      });
+
+      /* ---------- Reveal ---------- */
+      var revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+        revealEls.forEach(function (el) { io.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('visible'); });
+      }
+
+      /* ---------- Link ativo no menu ---------- */
+      var navLinks = document.querySelectorAll('.nav a');
+      if ('IntersectionObserver' in window) {
+        var spy = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              navLinks.forEach(function (a) {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id);
+              });
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px' });
+        document.querySelectorAll('main section[id]').forEach(function (s) { spy.observe(s); });
+      }
+
+      /* ---------- Filtro de repositórios ---------- */
+      var filterBtns = document.querySelectorAll('.filter-btn');
+      var repos = document.querySelectorAll('.repo');
+      var repoCount = document.getElementById('repoCount');
+
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var f = btn.getAttribute('data-filter');
+          var visible = 0;
+
+          filterBtns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+
+          repos.forEach(function (card) {
+            var show = f === 'all' || card.getAttribute('data-category') === f;
+            card.classList.toggle('hide', !show);
+            card.classList.remove('pop');
+            if (show) { visible++; void card.offsetWidth; card.classList.add('pop'); }
+          });
+
+          repoCount.textContent = visible + (visible === 1 ? ' repositório' : ' repositórios');
+        });
+      });
+
+      /* ---------- Formulário → WhatsApp ---------- */
+      var form = document.getElementById('contactForm');
+      var note = document.getElementById('formNote');
+
+      // Remove caracteres de controle e marcação, normaliza espaços e limita o tamanho
+      function sanitize(value, max) {
+        return String(value)
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+          .replace(/[<>]/g, '')
+          .replace(/[ \t]+/g, ' ')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+          .slice(0, max);
+      }
+
+      function setError(name, msg) {
+        var field = form.querySelector('[data-field="' + name + '"]');
+        field.setAttribute('data-invalid', msg ? 'true' : 'false');
+        document.getElementById('err-' + name).textContent = msg || '';
+        form[name].setAttribute('aria-invalid', msg ? 'true' : 'false');
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var nome = sanitize(form.nome.value, 80);
+        var mensagem = sanitize(form.mensagem.value, 800);
+        var ok = true;
+
+        if (nome.length < 2) { setError('nome', 'ERR: informe seu nome (mín. 2 caracteres).'); ok = false; }
+        else setError('nome', '');
+
+        if (mensagem.length < 10) { setError('mensagem', 'ERR: descreva o projeto (mín. 10 caracteres).'); ok = false; }
+        else setError('mensagem', '');
+
+        if (!ok) {
+          (nome.length < 2 ? form.nome : form.mensagem).focus();
+          note.textContent = '// corrija os campos destacados e tente novamente.';
+          return;
+        }
+
+        var texto =
+          'Olá, Pedro! Vim pelo seu portfólio.\n\n' +
+          '*Nome:* ' + nome + '\n' +
+          '*Mensagem:* ' + mensagem;
+
+        var url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(texto);
+        var w = window.open(url, '_blank', 'noopener');
+        if (!w) window.location.href = url;
+
+        note.textContent = '// 200 OK: abrindo o WhatsApp com a sua mensagem…';
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
